@@ -165,12 +165,9 @@ function dday(t) {
   if(t.dateType==="range"&&t.endDate){
     const end=new Date(t.endDate); end.setHours(0,0,0,0);
     if(today>end) return{label:"종료",color:"#3A3A5A",past:true};
-    if(today>=start){
-      const r=Math.ceil((end-today)/86400000);
-      return{label:`D-${r}`,color:r<=3?"#FF6B6B":"#A8E6CF",ongoing:true};
-    }
-    const d=Math.ceil((start-today)/86400000);
-    return{label:`D-${d}`,color:d<=10?"#FFE66D":"#5E5EFF"};
+    const r=Math.ceil((end-today)/86400000);
+    const ongoing=today>=start;
+    return{label:`D-${r}`,color:r<=3?"#FF6B6B":ongoing?"#A8E6CF":"#5E5EFF",ongoing};
   }
   const diff=Math.ceil((start-today)/86400000);
   if(diff<0) return{label:"종료",color:"#3A3A5A",past:true};
@@ -179,10 +176,10 @@ function dday(t) {
 function ddaySortKey(t) {
   const today=new Date(); today.setHours(0,0,0,0);
   if(t.dateType==="range"&&t.endDate){
+    const start=new Date(t.date); start.setHours(0,0,0,0);
     const end=new Date(t.endDate); end.setHours(0,0,0,0);
-    if(today>end) return Infinity;
-    if(today>=new Date(t.date)) return Math.ceil((end-today)/86400000);
-    return Math.ceil((new Date(t.date)-today)/86400000);
+    if(today>end) return Infinity;                          // 종료 → 맨 뒤
+    return Math.ceil((end-today)/86400000);                  // 항상 종료일 기준
   }
   const start=new Date(t.date); start.setHours(0,0,0,0);
   const diff=Math.ceil((start-today)/86400000);
@@ -325,7 +322,7 @@ function renderList(){
     const canAdv=idx>=0&&idx<STATUS_FLOW.length-1;
     const ongoingBadge="";
     const schedBadge=isScheduled(t.id)?`<span style="font-size:10px;color:#5E5EFF;opacity:.7;">🔔</span>`:"";
-    const qtyInline=qty>0?(adultC>0&&childC>0?`성인${adultC}·아이${childC}`:adultC>0?`성인${adultC}장`:`아이${childC}장`):"";
+    const qtyInline=qty>0?(adultC>0&&childC>0?`성인${adultC}·아이${childC}`:adultC>0?`성인${adultC}`:`아이${childC}`):"";
     const noteHtml=t.note?`<div style="font-size:11px;color:#3A3A5A;font-style:italic;margin-top:2px;">📝 ${esc(t.note)}</div>`:"";
     const nextBtnHtml=canAdv?`<button class="icon-btn" title="${STATUS_META[STATUS_FLOW[idx+1]].label}으로 변경" onclick="advanceStatus(${t.id})" style="font-size:16px;">✅</button>`:"" ;
     return `
@@ -337,9 +334,9 @@ function renderList(){
             <span style="font-size:14px;font-weight:600;line-height:1.2;">${esc(t.title)}</span>
             ${ongoingBadge}${schedBadge}
           </div>
-          <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
-            <span class="badge" style="background:${sm.bg};color:${sm.color};border:1px solid ${sm.border};width:72px;justify-content:center;font-size:11px;">${sm.label}</span>
+          <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
             <span style="font-size:11px;color:#666;white-space:nowrap;width:72px;text-align:right;">${qtyInline?`🎟 ${qtyInline}`:""}</span>
+            <span class="badge" style="background:${sm.bg};color:${sm.color};border:1px solid ${sm.border};width:72px;justify-content:center;font-size:11px;">${sm.label}</span>
           </div>
         </div>
         <!-- date + dday (full width) -->
