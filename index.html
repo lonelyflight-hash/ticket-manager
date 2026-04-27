@@ -167,14 +167,13 @@ function dday(t) {
     if(today>end) return{label:"종료",color:"#3A3A5A",past:true};
     if(today>=start){
       const r=Math.ceil((end-today)/86400000);
-      return{label:r===0?"오늘 마감!":`~${r}일 남음`,color:r<=3?"#FF6B6B":"#A8E6CF",ongoing:true};
+      return{label:`D-${r}`,color:r<=3?"#FF6B6B":"#A8E6CF",ongoing:true};
     }
     const d=Math.ceil((start-today)/86400000);
-    return{label:d===0?"오늘 시작!":`D-${d}`,color:d<=10?"#FFE66D":"#5E5EFF"};
+    return{label:`D-${d}`,color:d<=10?"#FFE66D":"#5E5EFF"};
   }
   const diff=Math.ceil((start-today)/86400000);
   if(diff<0) return{label:"종료",color:"#3A3A5A",past:true};
-  if(diff===0) return{label:"오늘!",color:"#FFE66D"};
   return{label:`D-${diff}`,color:diff<=10?"#FFE66D":"#5E5EFF"};
 }
 function ddaySortKey(t) {
