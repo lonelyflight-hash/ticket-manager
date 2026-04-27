@@ -72,6 +72,11 @@ label{font-size:11px;color:#555;display:block;margin-bottom:3px;letter-spacing:.
 /* fab */
 .fab{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 70px);right:20px;width:52px;height:52px;border-radius:26px;background:linear-gradient(135deg,#5E5EFF,#9B59B6);border:none;color:#fff;font-size:26px;cursor:pointer;box-shadow:0 4px 20px rgba(94,94,255,.4);display:flex;align-items:center;justify-content:center;z-index:20;transition:transform .15s;}
 .fab:active{transform:scale(.92);}
+.qty-pop{position:fixed;background:#1A1A2A;border:1px solid #3A3A5A;border-radius:14px;padding:12px 14px;z-index:150;box-shadow:0 8px 32px rgba(0,0,0,.7);min-width:180px;}
+.qty-pop-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;}
+.qty-pop-row:last-child{margin-bottom:0;}
+.qp-btn{background:#2A2A3A;border:1px solid #3A3A5A;color:#CCC;width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.qp-btn:active{background:#3A3A5A;}
 </style>
 </head>
 <body>
@@ -335,7 +340,7 @@ function renderList(){
             ${ongoingBadge}${schedBadge}
           </div>
           <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
-            <span style="font-size:11px;color:#666;white-space:nowrap;width:72px;text-align:right;">${qtyInline?`🎟 ${qtyInline}`:""}</span>
+            <span id="qty-${t.id}" style="font-size:11px;color:#666;white-space:nowrap;width:72px;text-align:right;cursor:pointer;" onclick="openQtyPop(${t.id},event)">${qtyInline?`🎟 ${qtyInline}`:"🎟 -"}</span>
             <span class="badge" style="background:${sm.bg};color:${sm.color};border:1px solid ${sm.border};width:72px;justify-content:center;font-size:11px;">${sm.label}</span>
           </div>
         </div>
@@ -546,6 +551,74 @@ document.getElementById("search-input").addEventListener("input", e=>{
   searchQ=e.target.value;
   renderList();
 });
+
+// ── qty popover ───────────────────────────────────────────────────────────────
+let qtyPopId = null;
+function openQtyPop(id, e) {
+  closeQtyPop();
+  qtyPopId = id;
+  const t = tickets.find(x=>x.id===id); if(!t) return;
+  const pop = document.createElement("div");
+  pop.className = "qty-pop";
+  pop.id = "qty-pop";
+  pop.innerHTML = `
+    <div class="qty-pop-row">
+      <span style="font-size:12px;color:#AAA;">👨 성인</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button class="qp-btn" onclick="adjustQty(${id},'adult',-1)">−</button>
+        <span id="qp-adult" style="font-family:'Space Mono',monospace;font-size:14px;font-weight:700;min-width:20px;text-align:center;">${t.adultCount||0}</span>
+        <button class="qp-btn" onclick="adjustQty(${id},'adult',1)">+</button>
+      </div>
+    </div>
+    <div class="qty-pop-row">
+      <span style="font-size:12px;color:#AAA;">🧒 아이</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button class="qp-btn" onclick="adjustQty(${id},'child',-1)">−</button>
+        <span id="qp-child" style="font-family:'Space Mono',monospace;font-size:14px;font-weight:700;min-width:20px;text-align:center;">${t.childCount||0}</span>
+        <button class="qp-btn" onclick="adjustQty(${id},'child',1)">+</button>
+      </div>
+    </div>`;
+  document.body.appendChild(pop);
+  // position near tapped element
+  const rect = e.target.getBoundingClientRect();
+  const popW = 180, popH = 100;
+  let top = rect.bottom + 6;
+  let left = rect.right - popW;
+  if(top + popH > window.innerHeight) top = rect.top - popH - 6;
+  if(left < 8) left = 8;
+  pop.style.top = top + "px";
+  pop.style.left = left + "px";
+  setTimeout(()=>document.addEventListener("click", onOutsideQty), 10);
+}
+function onOutsideQty(e) {
+  const pop = document.getElementById("qty-pop");
+  if(pop && !pop.contains(e.target)) closeQtyPop();
+}
+function closeQtyPop() {
+  const pop = document.getElementById("qty-pop");
+  if(pop) pop.remove();
+  document.removeEventListener("click", onOutsideQty);
+  qtyPopId = null;
+}
+function adjustQty(id, type, delta) {
+  tickets = tickets.map(t => {
+    if(t.id !== id) return t;
+    if(type==="adult") return {...t, adultCount: Math.max(0,(t.adultCount||0)+delta)};
+    return {...t, childCount: Math.max(0,(t.childCount||0)+delta)};
+  });
+  saveTickets();
+  // update pop display
+  const t = tickets.find(x=>x.id===id);
+  const ea = document.getElementById("qp-adult");
+  const ec = document.getElementById("qp-child");
+  if(ea) ea.textContent = t.adultCount||0;
+  if(ec) ec.textContent = t.childCount||0;
+  // update card qty span
+  const adultC=t.adultCount||0, childC=t.childCount||0, qty=adultC+childC;
+  const qtyInline=qty>0?(adultC>0&&childC>0?`성인${adultC}·아이${childC}`:adultC>0?`성인${adultC}`:`아이${childC}`):"";
+  const el = document.getElementById("qty-"+id);
+  if(el) el.textContent = qtyInline ? "🎟 "+qtyInline : "🎟 -";
+}
 
 // ── boot ───────────────────────────────────────────────────────────────────────
 loadTickets();
