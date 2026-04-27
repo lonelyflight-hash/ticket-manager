@@ -324,7 +324,7 @@ function renderList(){
     const qty=adultC+childC;
     const idx=STATUS_FLOW.indexOf(t.status);
     const canAdv=idx>=0&&idx<STATUS_FLOW.length-1;
-    const ongoingBadge=d.ongoing?`<span style="font-size:10px;background:rgba(168,230,207,.08);color:#A8E6CF;border:1px solid rgba(168,230,207,.2);padding:1px 7px;border-radius:20px;">진행중</span>`:"";
+    const ongoingBadge="";
     const schedBadge=isScheduled(t.id)?`<span style="font-size:10px;color:#5E5EFF;opacity:.7;">🔔</span>`:"";
     const qtyInline=qty>0?(adultC>0&&childC>0?`성인${adultC}·아이${childC}`:adultC>0?`성인${adultC}장`:`아이${childC}장`):"";
     const noteHtml=t.note?`<div style="font-size:11px;color:#3A3A5A;font-style:italic;margin-top:2px;">📝 ${esc(t.note)}</div>`:"";
