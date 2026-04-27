@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="theme-color" content="#08080E"/>
+<title>티켓 매니저</title>
+<link rel="manifest" href="manifest.json"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{background:#08080E;color:#E0E0EE;font-family:'Noto Sans KR',sans-serif;overscroll-behavior:none;}
+#app{height:100dvh;display:flex;flex-direction:column;overflow:hidden;}
+/* scrollbar */
+::-webkit-scrollbar{width:3px;height:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:#2A2A3E;border-radius:2px;}
+/* header */
+.topbar{background:#08080E;padding:env(safe-area-inset-top,0) 16px 0;position:sticky;top:0;z-index:10;border-bottom:1px solid #111120;}
+.topbar-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 0 12px;}
+/* main scroll */
+.main-scroll{flex:1;overflow-y:auto;padding:14px 16px calc(env(safe-area-inset-bottom,0px) + 80px);-webkit-overflow-scrolling:touch;}
+/* bottom nav */
+.bottomnav{position:fixed;bottom:0;left:0;right:0;background:#0C0C18;border-top:1px solid #1A1A2A;display:flex;padding-bottom:env(safe-area-inset-bottom,0);z-index:10;}
+.nav-btn{flex:1;background:none;border:none;color:#444;cursor:pointer;padding:10px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-family:inherit;transition:color .2s;}
+.nav-btn.active{color:#5E5EFF;}
+.nav-btn span.icon{font-size:20px;}
+/* cards */
+.card{background:#0E0E18;border:1px solid #1A1A2A;border-radius:16px;padding:14px 14px 14px 18px;position:relative;overflow:hidden;transition:border .15s;}
+.card:active{border-color:#2C2C44;background:#111120;}
+/* buttons */
+.primary-btn{background:linear-gradient(135deg,#5E5EFF,#9B59B6);border:none;color:#fff;padding:12px 20px;border-radius:12px;cursor:pointer;font-family:inherit;font-size:15px;font-weight:500;transition:opacity .15s;}
+.primary-btn:active{opacity:.8;}
+.primary-btn:disabled{opacity:.35;}
+.icon-btn{background:none;border:none;cursor:pointer;padding:6px 8px;border-radius:8px;color:#3A3A5A;font-size:15px;transition:color .15s;}
+.icon-btn:active{color:#BBBBCC;background:#1A1A2A;}
+.next-btn{background:none;border:1px solid #2A2A3A;color:#555;cursor:pointer;padding:5px 11px;border-radius:20px;font-size:11px;font-family:inherit;white-space:nowrap;}
+.next-btn:active{border-color:#5E5EFF;color:#7A7AFF;}
+.cnt-btn{background:#1A1A2A;border:1px solid #2A2A3A;color:#AAA;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.cnt-btn:active{background:#2A2A44;}
+.tab-btn{background:none;border:none;cursor:pointer;padding:7px 14px;border-radius:20px;font-size:12px;font-family:inherit;color:#444;white-space:nowrap;transition:all .15s;}
+.tab-btn.active{background:#1A1A2A;color:#E0E0EE;}
+.badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:500;}
+/* input */
+input,select,textarea{background:#12121C;border:1px solid #2A2A3A;border-radius:10px;color:#E0E0EE;padding:11px 14px;font-family:inherit;font-size:16px;width:100%;outline:none;-webkit-appearance:none;appearance:none;}
+input:focus,select:focus,textarea:focus{border-color:#5E5EFF;}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23555' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
+select option{background:#12121C;}
+label{font-size:11px;color:#555;display:block;margin-bottom:5px;letter-spacing:.08em;text-transform:uppercase;}
+/* modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(8px);z-index:100;display:flex;align-items:flex-end;padding:0;}
+.modal{background:#0E0E18;border:1px solid #2A2A3A;border-radius:24px 24px 0 0;padding:20px 20px calc(env(safe-area-inset-bottom,0px) + 20px);width:100%;max-height:92dvh;overflow-y:auto;animation:slideUp .28s cubic-bezier(.32,0,.17,1);}
+@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.modal-handle{width:36px;height:4px;background:#2A2A3A;border-radius:2px;margin:0 auto 18px;}
+/* stat boxes */
+.stat-box{background:#0E0E18;border:1px solid #1A1A2A;border-radius:13px;padding:11px 12px;flex:1;min-width:0;}
+/* banner */
+.banner{position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);left:50%;transform:translateX(-50%);z-index:200;background:#1A1A28;border:1px solid #3A3A5A;border-radius:12px;padding:11px 18px;font-size:13px;color:#E0E0EE;box-shadow:0 4px 24px rgba(0,0,0,.6);white-space:nowrap;animation:bd .3s ease;max-width:90vw;text-align:center;}
+.banner.err{border-color:rgba(255,107,107,.35);color:#FF9999;}
+@keyframes bd{from{opacity:0;transform:translateX(-50%) translateY(-8px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+/* install banner */
+.install-bar{background:linear-gradient(135deg,rgba(94,94,255,.15),rgba(155,89,182,.15));border:1px solid rgba(94,94,255,.25);border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;}
+/* notif strip */
+.notif-strip{background:#0C0C16;border:1px solid #1A1A2A;border-radius:12px;padding:11px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;}
+/* fab */
+.fab{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 70px);right:20px;width:52px;height:52px;border-radius:26px;background:linear-gradient(135deg,#5E5EFF,#9B59B6);border:none;color:#fff;font-size:26px;cursor:pointer;box-shadow:0 4px 20px rgba(94,94,255,.4);display:flex;align-items:center;justify-content:center;z-index:20;transition:transform .15s;}
+.fab:active{transform:scale(.92);}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div>
+        <div style="font-size:18px;font-weight:700;letter-spacing:-0.03em">🎫 티켓 매니저</div>
+      </div>
+      <div id="header-right"></div>
+    </div>
+    <!-- tabs -->
+    <div id="tabs-container" style="display:flex;gap:3px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none;-ms-overflow-style:none;"></div>
+  </div>
+
+  <div class="main-scroll" id="main-scroll">
+    <div id="install-banner-container"></div>
+    <div id="notif-strip-container"></div>
+    <!-- stats -->
+    <div id="stats-row" style="display:flex;gap:7px;margin-bottom:12px;overflow-x:auto;padding-bottom:2px;"></div>
+    <!-- search -->
+    <div style="position:relative;margin-bottom:12px;">
+      <span style="position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#2E2E44;font-size:14px;pointer-events:none;">🔍</span>
+      <input id="search-input" style="background:#0E0E18;border:1px solid #1A1A2A;border-radius:12px;color:#E0E0EE;padding:10px 14px 10px 38px;font-family:inherit;font-size:14px;width:100%;outline:none;" placeholder="제목, 장소, 카테고리 검색..."/>
+    </div>
+    <!-- list -->
+    <div id="ticket-list"></div>
+  </div>
+
+  <button class="fab" id="fab-add">+</button>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal-overlay" style="display:none;">
+    <div class="modal" id="modal-content">
+      <div class="modal-handle"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+        <div style="font-size:16px;font-weight:700;" id="modal-title">티켓 추가</div>
+        <button class="icon-btn" id="modal-close" style="font-size:18px;">✕</button>
+      </div>
+      <div id="modal-form"></div>
+    </div>
+  </div>
+
+  <div id="banner-container"></div>
+</div>
+
+<script>
+// ── constants ──────────────────────────────────────────────────────────────────
+const CATEGORIES = ["콘서트","스포츠","뮤지컬","영화","전시회","기타"];
+const STATUS = {BEFORE:"before",BUYING:"buying",PURCHASED:"purchased",DONE:"done"};
+const STATUS_META = {
+  before:    {label:"구매 전",   color:"#888",    bg:"rgba(136,136,136,.12)",border:"rgba(136,136,136,.22)"},
+  buying:    {label:"구매 중",   color:"#FFB347", bg:"rgba(255,179,71,.12)", border:"rgba(255,179,71,.22)"},
+  purchased: {label:"구매 완료", color:"#4ECDC4", bg:"rgba(78,205,196,.12)", border:"rgba(78,205,196,.22)"},
+  done:      {label:"관람 완료", color:"#9B8EA8", bg:"rgba(155,142,168,.12)",border:"rgba(155,142,168,.22)"},
+};
+const STATUS_FLOW = ["before","buying","purchased","done"];
+const CAT_COLOR = {"콘서트":"#FF6B6B","스포츠":"#4ECDC4","뮤지컬":"#FFE66D","영화":"#A8E6CF","전시회":"#DDA0DD","기타":"#B0BEC5"};
+
+const INITIAL = [
+  {id:1,title:"아이유 콘서트",category:"콘서트",dateType:"single",date:"2026-06-15",endDate:"",venue:"올림픽공원",adultCount:2,childCount:0,status:"purchased",note:"R석 23열"},
+  {id:2,title:"손흥민 귀국 경기",category:"스포츠",dateType:"single",date:"2026-07-20",endDate:"",venue:"서울월드컵경기장",adultCount:2,childCount:1,status:"before",note:""},
+  {id:3,title:"모네: 빛을 그리다",category:"전시회",dateType:"range",date:"2026-05-01",endDate:"2026-08-31",venue:"국립현대미술관",adultCount:1,childCount:2,status:"purchased",note:""},
+];
+
+// ── state ──────────────────────────────────────────────────────────────────────
+let tickets = [];
+let activeTab = "all";
+let searchQ = "";
+let editId = null;
+let deferredInstall = null;
+let scheduledTimers = [];
+let bannerTimer = null;
+
+// ── storage ────────────────────────────────────────────────────────────────────
+function loadTickets() {
+  try {
+    const s = localStorage.getItem("tickets_pwa_v1");
+    tickets = s ? JSON.parse(s) : JSON.parse(JSON.stringify(INITIAL));
+  } catch { tickets = JSON.parse(JSON.stringify(INITIAL)); }
+}
+function saveTickets() {
+  try { localStorage.setItem("tickets_pwa_v1", JSON.stringify(tickets)); } catch {}
+}
+
+// ── helpers ────────────────────────────────────────────────────────────────────
+function fmtDate(d) { if(!d) return ""; const [y,m,day]=d.split("-"); return `${y}.${m}.${day}`; }
+function fmtDisplay(t) {
+  return (t.dateType==="range"&&t.endDate) ? `${fmtDate(t.date)} ~ ${fmtDate(t.endDate)}` : fmtDate(t.date);
+}
+function dday(t) {
+  const today=new Date(); today.setHours(0,0,0,0);
+  const start=new Date(t.date); start.setHours(0,0,0,0);
+  if(t.dateType==="range"&&t.endDate){
+    const end=new Date(t.endDate); end.setHours(0,0,0,0);
+    if(today>end) return{label:"종료",color:"#3A3A5A",past:true};
+    if(today>=start){
+      const r=Math.ceil((end-today)/86400000);
+      return{label:r===0?"오늘 마감!":`~${r}일 남음`,color:r<=3?"#FF6B6B":"#A8E6CF",ongoing:true};
+    }
+    const d=Math.ceil((start-today)/86400000);
+    return{label:d===0?"오늘 시작!":`D-${d}`,color:d<=10?"#FFE66D":"#5E5EFF"};
+  }
+  const diff=Math.ceil((start-today)/86400000);
+  if(diff<0) return{label:"종료",color:"#3A3A5A",past:true};
+  if(diff===0) return{label:"오늘!",color:"#FFE66D"};
+  return{label:`D-${diff}`,color:diff<=10?"#FFE66D":"#5E5EFF"};
+}
+function ddaySortKey(t) {
+  const today=new Date(); today.setHours(0,0,0,0);
+  if(t.dateType==="range"&&t.endDate){
+    const end=new Date(t.endDate); end.setHours(0,0,0,0);
+    if(today>end) return Infinity;
+    if(today>=new Date(t.date)) return Math.ceil((end-today)/86400000);
+    return Math.ceil((new Date(t.date)-today)/86400000);
+  }
+  const start=new Date(t.date); start.setHours(0,0,0,0);
+  const diff=Math.ceil((start-today)/86400000);
+  return diff<0?Infinity:diff;
+}
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function showBanner(msg,type="ok"){
+  if(bannerTimer) clearTimeout(bannerTimer);
+  const c=document.getElementById("banner-container");
+  c.innerHTML=`<div class="banner ${type==="err"?"err":""}">${esc(msg)}</div>`;
+  bannerTimer=setTimeout(()=>{c.innerHTML="";},3500);
+}
+
+// ── notifications ──────────────────────────────────────────────────────────────
+function rescheduleAll() {
+  scheduledTimers.forEach(s=>clearTimeout(s.tid));
+  scheduledTimers=[];
+  if(!("Notification" in window)||Notification.permission!=="granted") return;
+  tickets.filter(t=>t.status==="purchased"||t.status==="buying").forEach(t=>{
+    const start=new Date(t.date); start.setHours(9,0,0,0);
+    const notify=new Date(start); notify.setDate(notify.getDate()-10);
+    const ms=notify.getTime()-Date.now();
+    if(ms>0){
+      const tid=setTimeout(()=>{
+        new Notification(`🎫 D-10 알림: ${t.title}`,{body:`${fmtDate(t.date)} 행사까지 10일 남았습니다!`,tag:`ticket-${t.id}`});
+      },ms);
+      scheduledTimers.push({id:t.id,tid});
+    }
+  });
+}
+function isScheduled(id){ return scheduledTimers.some(s=>s.id===id); }
+
+async function handleRequestNotif(){
+  if(!("Notification" in window)){showBanner("이 브라우저는 알림을 지원하지 않아요","err");return;}
+  const p=await Notification.requestPermission();
+  if(p==="granted"){rescheduleAll();showBanner("알림이 허용되었어요! D-10에 자동으로 알립니다 🔔");renderNotifStrip();}
+  else if(p==="denied"){showBanner("알림이 차단되었어요. 브라우저 설정에서 변경해 주세요.","err");}
+  renderNotifStrip();
+}
+
+// ── render ─────────────────────────────────────────────────────────────────────
+function render(){
+  renderStats();
+  renderTabs();
+  renderList();
+  renderNotifStrip();
+  renderInstallBanner();
+}
+
+function renderStats(){
+  const counts=Object.fromEntries(STATUS_FLOW.map(s=>[s,tickets.filter(t=>t.status===s).length]));
+  const total=tickets.reduce((s,t)=>s+(t.adultCount||0)+(t.childCount||0),0);
+  const row=document.getElementById("stats-row");
+  row.innerHTML=STATUS_FLOW.map(s=>`
+    <div class="stat-box" style="cursor:pointer;" onclick="setTab('${s}')">
+      <div style="font-size:9px;color:#444;margin-bottom:3px;letter-spacing:.06em;">${STATUS_META[s].label.toUpperCase()}</div>
+      <div style="font-size:19px;font-weight:700;font-family:'Space Mono',monospace;color:${STATUS_META[s].color};">${counts[s]}</div>
+    </div>
+  `).join("")+`
+    <div class="stat-box" style="flex:1.4;">
+      <div style="font-size:9px;color:#444;margin-bottom:3px;letter-spacing:.06em;">TOTAL</div>
+      <div style="font-size:19px;font-weight:700;font-family:'Space Mono',monospace;color:#E0E0EE;">${total}장</div>
+    </div>
+  `;
+}
+
+function renderTabs(){
+  const counts=Object.fromEntries(STATUS_FLOW.map(s=>[s,tickets.filter(t=>t.status===s).length]));
+  const c=document.getElementById("tabs-container");
+  const tabs=[["all",`전체 ${tickets.length}`],...STATUS_FLOW.map(s=>[s,`${STATUS_META[s].label} ${counts[s]}`])];
+  c.innerHTML=tabs.map(([v,l])=>`<button class="tab-btn ${activeTab===v?"active":""}" onclick="setTab('${v}')">${esc(l)}</button>`).join("");
+}
+
+function renderNotifStrip(){
+  const perm="Notification" in window?Notification.permission:"unsupported";
+  const scheduled=scheduledTimers.length;
+  const statusText=perm==="granted"?`켜짐 · ${scheduled}개 예약됨`
+    :perm==="denied"?"차단됨 — 브라우저 설정에서 허용해 주세요"
+    :perm==="unsupported"?"이 브라우저는 알림을 지원하지 않아요"
+    :"허용하면 행사 D-10에 자동으로 알려드려요";
+  const btn=perm==="granted"
+    ?`<button onclick="testNotif()" style="background:none;border:1px solid #2A2A3A;color:#666;padding:5px 10px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:11px;">테스트</button>`
+    :perm!=="unsupported"
+    ?`<button onclick="handleRequestNotif()" style="background:linear-gradient(135deg,#5E5EFF,#9B59B6);border:none;color:#fff;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;">허용하기</button>`
+    :"";
+  document.getElementById("notif-strip-container").innerHTML=`
+    <div class="notif-strip">
+      <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+        <span style="font-size:15px;flex-shrink:0;">🔔</span>
+        <div style="min-width:0;">
+          <div style="font-size:12px;font-weight:600;">D-10 푸시 알림</div>
+          <div style="font-size:10px;color:#444;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(statusText)}</div>
+        </div>
+      </div>
+      <div style="flex-shrink:0;">${btn}</div>
+    </div>`;
+}
+
+function testNotif(){
+  if(Notification.permission==="granted") new Notification("🎫 테스트 알림",{body:"D-10 알림이 이렇게 표시됩니다!"});
+}
+
+function renderInstallBanner(){
+  const c=document.getElementById("install-banner-container");
+  if(!deferredInstall){c.innerHTML="";return;}
+  c.innerHTML=`
+    <div class="install-bar">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:18px;">📲</span>
+        <div>
+          <div style="font-size:13px;font-weight:600;">홈 화면에 설치</div>
+          <div style="font-size:10px;color:#888;">앱처럼 사용할 수 있어요</div>
+        </div>
+      </div>
+      <button onclick="installPWA()" style="background:linear-gradient(135deg,#5E5EFF,#9B59B6);border:none;color:#fff;padding:7px 14px;border-radius:9px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;">설치</button>
+    </div>`;
+}
+
+function renderList(){
+  const filtered=tickets
+    .filter(t=>activeTab==="all"||t.status===activeTab)
+    .filter(t=>!searchQ||[t.title,t.venue||"",t.category].some(s=>s.includes(searchQ)))
+    .sort((a,b)=>ddaySortKey(a)-ddaySortKey(b));
+
+  const list=document.getElementById("ticket-list");
+  if(!filtered.length){
+    list.innerHTML=`<div style="text-align:center;padding:60px 0;color:#252535;"><div style="font-size:44px;margin-bottom:10px;">🎟️</div><div style="font-size:13px;">티켓이 없어요</div></div>`;
+    return;
+  }
+  list.innerHTML=filtered.map(t=>{
+    const d=dday(t);
+    const sm=STATUS_META[t.status];
+    const qty=(t.adultCount||0)+(t.childCount||0);
+    const idx=STATUS_FLOW.indexOf(t.status);
+    const canAdv=idx>=0&&idx<STATUS_FLOW.length-1;
+    const ongoingBadge=d.ongoing?`<span style="font-size:10px;background:rgba(168,230,207,.08);color:#A8E6CF;border:1px solid rgba(168,230,207,.2);padding:1px 7px;border-radius:20px;">진행중</span>`:"";
+    const schedBadge=isScheduled(t.id)?`<span style="font-size:10px;color:#5E5EFF;opacity:.7;">🔔</span>`:"";
+    const qtyHtml=qty>0?`
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:${t.note?4:0}px;">
+        ${t.adultCount>0?`<span style="font-size:11px;color:#777;background:#111120;padding:2px 8px;border-radius:10px;">👨 성인 ${t.adultCount}장</span>`:""}
+        ${t.childCount>0?`<span style="font-size:11px;color:#777;background:#111120;padding:2px 8px;border-radius:10px;">🧒 아이 ${t.childCount}장</span>`:""}
+        <span style="font-size:11px;color:#555;">합계 ${qty}장</span>
+      </div>`:"";
+    const noteHtml=t.note?`<div style="font-size:11px;color:#3A3A5A;font-style:italic;margin-top:2px;">📝 ${esc(t.note)}</div>`:"";
+    const nextBtnHtml=canAdv?`<button class="next-btn" onclick="advanceStatus(${t.id})">→ ${STATUS_META[STATUS_FLOW[idx+1]].label}</button>`:"";
+    return `
+      <div class="card" style="opacity:${t.status==="done"?.6:1};margin-bottom:9px;">
+        <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:${CAT_COLOR[t.category]||"#444"};border-radius:16px 0 0 16px;"></div>
+        <div style="display:flex;align-items:flex-start;gap:10px;">
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:5px;">
+              <span style="font-size:14px;font-weight:600;">${esc(t.title)}</span>
+              <span class="badge" style="background:${sm.bg};color:${sm.color};border:1px solid ${sm.border};">${sm.label}</span>
+              ${ongoingBadge}${schedBadge}
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:${qty>0?5:0}px;">
+              <span style="font-size:11px;color:#4A4A6A;">📅 ${fmtDisplay(t)}</span>
+              ${t.venue?`<span style="font-size:11px;color:#4A4A6A;">📍 ${esc(t.venue)}</span>`:""}
+              <span style="font-size:10px;color:#555;background:#111120;padding:1px 7px;border-radius:10px;">${esc(t.category)}</span>
+            </div>
+            ${qtyHtml}${noteHtml}
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:7px;flex-shrink:0;">
+            <div style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:${d.color};">${d.label}</div>
+            <div style="display:flex;gap:4px;align-items:center;">
+              ${nextBtnHtml}
+              <button class="icon-btn" onclick="openEdit(${t.id})">✏️</button>
+              <button class="icon-btn" onclick="removeTicket(${t.id})">🗑️</button>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+// ── modal ──────────────────────────────────────────────────────────────────────
+function openAdd(){
+  editId=null;
+  document.getElementById("modal-title").textContent="티켓 추가";
+  renderForm({title:"",category:"콘서트",dateType:"single",date:"",endDate:"",venue:"",adultCount:1,childCount:0,status:"before",note:""});
+  openModal();
+}
+function openEdit(id){
+  editId=id;
+  const t=tickets.find(x=>x.id===id);
+  if(!t) return;
+  document.getElementById("modal-title").textContent="티켓 수정";
+  renderForm({...t});
+  openModal();
+}
+function openModal(){
+  document.getElementById("modal-overlay").style.display="flex";
+  document.body.style.overflow="hidden";
+}
+function closeModal(){
+  document.getElementById("modal-overlay").style.display="none";
+  document.body.style.overflow="";
+}
+
+function renderForm(f){
+  const dateFields=f.dateType==="range"
+    ?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div><label>시작일 *</label><input type="date" id="f-date" value="${esc(f.date)}"/></div>
+        <div><label>종료일 *</label><input type="date" id="f-endDate" value="${esc(f.endDate)}" min="${esc(f.date)}"/></div>
+      </div>`
+    :`<div><label>날짜 *</label><input type="date" id="f-date" value="${esc(f.date)}"/></div>`;
+
+  document.getElementById("modal-form").innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:13px;">
+      <div>
+        <label>공연 / 이벤트 이름 *</label>
+        <input id="f-title" placeholder="예: 아이유 콘서트" value="${esc(f.title)}"/>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div>
+          <label>카테고리</label>
+          <select id="f-category">${CATEGORIES.map(c=>`<option value="${c}" ${f.category===c?"selected":""}>${c}</option>`).join("")}</select>
+        </div>
+        <div>
+          <label>상태</label>
+          <select id="f-status">${STATUS_FLOW.map(s=>`<option value="${s}" ${f.status===s?"selected":""}>${STATUS_META[s].label}</option>`).join("")}</select>
+        </div>
+      </div>
+      <div>
+        <label>날짜 유형</label>
+        <select id="f-dateType" onchange="onDateTypeChange(this.value,{...getFormValues(),dateType:this.value})">
+          <option value="single" ${f.dateType==="single"?"selected":""}>📌 단일 날짜</option>
+          <option value="range" ${f.dateType==="range"?"selected":""}>📆 기간 설정</option>
+        </select>
+      </div>
+      <div id="date-fields-container">${dateFields}</div>
+      <div><label>장소</label><input id="f-venue" placeholder="예: 올림픽공원 체조경기장" value="${esc(f.venue)}"/></div>
+      <div>
+        <label>티켓 수량</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          ${["adultCount","childCount"].map((key,i)=>`
+            <div style="background:#12121C;border:1px solid #2A2A3A;border-radius:10px;padding:10px 12px;">
+              <div style="font-size:11px;color:#555;margin-bottom:8px;">${i===0?"👨‍👩‍👧 성인":"🧒 아이"}</div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <button class="cnt-btn" onclick="adjustCount('${key}',-1)">−</button>
+                <span id="cnt-${key}" style="font-family:'Space Mono',monospace;font-size:15px;font-weight:700;min-width:24px;text-align:center;">${f[key]||0}</span>
+                <button class="cnt-btn" onclick="adjustCount('${key}',1)">+</button>
+              </div>
+            </div>`).join("")}
+        </div>
+      </div>
+      <div><label>메모</label><textarea id="f-note" rows="2" style="resize:none;" placeholder="좌석 정보, 링크 등...">${esc(f.note)}</textarea></div>
+      <div style="border-top:1px solid #1A1A2A;padding-top:12px;display:flex;gap:8px;">
+        <button onclick="closeModal()" style="flex:1;background:#12121C;border:1px solid #2A2A3A;color:#555;padding:12px;border-radius:12px;cursor:pointer;font-family:inherit;font-size:14px;">취소</button>
+        <button class="primary-btn" onclick="saveTicket()" style="flex:2;">${editId?"수정하기":"추가하기"}</button>
+      </div>
+    </div>`;
+  
+  // store counts in dataset
+  document.getElementById("cnt-adultCount")._val = f.adultCount||0;
+  document.getElementById("cnt-childCount")._val = f.childCount||0;
+}
+
+function onDateTypeChange(type, f){
+  f.dateType=type; f.endDate="";
+  const dateFields=type==="range"
+    ?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div><label>시작일 *</label><input type="date" id="f-date" value="${esc(f.date)}"/></div>
+        <div><label>종료일 *</label><input type="date" id="f-endDate" value=""/></div>
+      </div>`
+    :`<div><label>날짜 *</label><input type="date" id="f-date" value="${esc(f.date)}"/></div>`;
+  document.getElementById("date-fields-container").innerHTML=dateFields;
+}
+
+function adjustCount(key, delta){
+  const el=document.getElementById("cnt-"+key);
+  const cur=parseInt(el.textContent)||0;
+  const next=Math.max(0,cur+delta);
+  el.textContent=next;
+  el._val=next;
+}
+
+function getFormValues(){
+  return {
+    title:(document.getElementById("f-title")||{}).value||"",
+    category:(document.getElementById("f-category")||{}).value||"콘서트",
+    dateType:(document.getElementById("f-dateType")||{}).value||"single",
+    date:(document.getElementById("f-date")||{}).value||"",
+    endDate:(document.getElementById("f-endDate")||{value:""}).value||"",
+    venue:(document.getElementById("f-venue")||{}).value||"",
+    adultCount:parseInt((document.getElementById("cnt-adultCount")||{textContent:"0"}).textContent)||0,
+    childCount:parseInt((document.getElementById("cnt-childCount")||{textContent:"0"}).textContent)||0,
+    status:(document.getElementById("f-status")||{}).value||"before",
+    note:(document.getElementById("f-note")||{}).value||"",
+  };
+}
+
+function saveTicket(){
+  const f=getFormValues();
+  if(!f.title.trim()||!f.date){showBanner("이름과 날짜는 필수예요","err");return;}
+  if(f.dateType==="range"&&!f.endDate){showBanner("종료일을 입력해주세요","err");return;}
+  if(editId){
+    tickets=tickets.map(t=>t.id===editId?{...f,id:t.id}:t);
+  } else {
+    tickets=[...tickets,{...f,id:Date.now()}];
+  }
+  saveTickets();
+  rescheduleAll();
+  closeModal();
+  render();
+}
+
+function removeTicket(id){
+  if(!confirm("이 티켓을 삭제할까요?")) return;
+  tickets=tickets.filter(t=>t.id!==id);
+  saveTickets();
+  rescheduleAll();
+  render();
+}
+
+function advanceStatus(id){
+  tickets=tickets.map(t=>{
+    if(t.id!==id) return t;
+    const idx=STATUS_FLOW.indexOf(t.status);
+    if(idx<0||idx>=STATUS_FLOW.length-1) return t;
+    return {...t,status:STATUS_FLOW[idx+1]};
+  });
+  saveTickets();
+  rescheduleAll();
+  render();
+}
+
+function setTab(v){ activeTab=v; render(); }
+
+// ── PWA install ────────────────────────────────────────────────────────────────
+window.addEventListener("beforeinstallprompt", e=>{
+  e.preventDefault();
+  deferredInstall=e;
+  renderInstallBanner();
+});
+window.addEventListener("appinstalled",()=>{
+  deferredInstall=null;
+  renderInstallBanner();
+  showBanner("앱이 설치되었어요! 🎉");
+});
+function installPWA(){
+  if(!deferredInstall) return;
+  deferredInstall.prompt();
+  deferredInstall.userChoice.then(r=>{
+    if(r.outcome==="accepted"){ deferredInstall=null; renderInstallBanner(); }
+  });
+}
+
+// ── service worker ─────────────────────────────────────────────────────────────
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("sw.js").catch(()=>{});
+}
+
+// ── event wiring ───────────────────────────────────────────────────────────────
+document.getElementById("fab-add").addEventListener("click", openAdd);
+document.getElementById("modal-close").addEventListener("click", closeModal);
+document.getElementById("modal-overlay").addEventListener("click", e=>{
+  if(e.target===document.getElementById("modal-overlay")) closeModal();
+});
+document.getElementById("search-input").addEventListener("input", e=>{
+  searchQ=e.target.value;
+  renderList();
+});
+
+// ── boot ───────────────────────────────────────────────────────────────────────
+loadTickets();
+if("Notification" in window && Notification.permission==="granted") rescheduleAll();
+render();
+</script>
+</body>
+</html>
