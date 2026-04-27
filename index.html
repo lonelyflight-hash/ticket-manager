@@ -535,7 +535,7 @@ function installPWA(){
 
 // ── service worker ─────────────────────────────────────────────────────────────
 if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("sw.js").catch(()=>{});
+  navigator.serviceWorker.register('./sw.js', {scope: './'}).catch(()=>{});
 }
 
 // ── event wiring ───────────────────────────────────────────────────────────────
