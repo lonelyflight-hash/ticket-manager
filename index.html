@@ -22,16 +22,16 @@ body{background:#08080E;color:#E0E0EE;font-family:'Noto Sans KR',sans-serif;over
 ::-webkit-scrollbar-thumb{background:#2A2A3E;border-radius:2px;}
 /* header */
 .topbar{background:#08080E;padding:env(safe-area-inset-top,0) 16px 0;position:sticky;top:0;z-index:10;border-bottom:1px solid #111120;}
-.topbar-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 0 12px;}
+.topbar-inner{display:flex;align-items:center;justify-content:space-between;padding:10px 0 8px;}
 /* main scroll */
-.main-scroll{flex:1;overflow-y:auto;padding:14px 16px calc(env(safe-area-inset-bottom,0px) + 80px);-webkit-overflow-scrolling:touch;}
+.main-scroll{flex:1;overflow-y:auto;padding:10px 16px calc(env(safe-area-inset-bottom,0px) + 76px);-webkit-overflow-scrolling:touch;}
 /* bottom nav */
 .bottomnav{position:fixed;bottom:0;left:0;right:0;background:#0C0C18;border-top:1px solid #1A1A2A;display:flex;padding-bottom:env(safe-area-inset-bottom,0);z-index:10;}
 .nav-btn{flex:1;background:none;border:none;color:#444;cursor:pointer;padding:10px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-family:inherit;transition:color .2s;}
 .nav-btn.active{color:#5E5EFF;}
 .nav-btn span.icon{font-size:20px;}
 /* cards */
-.card{background:#0E0E18;border:1px solid #1A1A2A;border-radius:16px;padding:14px 14px 14px 18px;position:relative;overflow:hidden;transition:border .15s;}
+.card{background:#0E0E18;border:1px solid #1A1A2A;border-radius:14px;padding:10px 12px 10px 16px;position:relative;overflow:hidden;transition:border .15s;}
 .card:active{border-color:#2C2C44;background:#111120;}
 /* buttons */
 .primary-btn{background:linear-gradient(135deg,#5E5EFF,#9B59B6);border:none;color:#fff;padding:12px 20px;border-radius:12px;cursor:pointer;font-family:inherit;font-size:15px;font-weight:500;transition:opacity .15s;}
@@ -43,7 +43,7 @@ body{background:#08080E;color:#E0E0EE;font-family:'Noto Sans KR',sans-serif;over
 .next-btn:active{border-color:#5E5EFF;color:#7A7AFF;}
 .cnt-btn{background:#1A1A2A;border:1px solid #2A2A3A;color:#AAA;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .cnt-btn:active{background:#2A2A44;}
-.tab-btn{background:none;border:none;cursor:pointer;padding:7px 14px;border-radius:20px;font-size:12px;font-family:inherit;color:#444;white-space:nowrap;transition:all .15s;}
+.tab-btn{background:none;border:none;cursor:pointer;padding:7px 0;border-radius:20px;font-size:12px;font-family:inherit;color:#444;white-space:nowrap;transition:all .15s;flex:1;text-align:center;}
 .tab-btn.active{background:#1A1A2A;color:#E0E0EE;}
 .badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:500;}
 /* input */
@@ -51,22 +51,24 @@ input,select,textarea{background:#12121C;border:1px solid #2A2A3A;border-radius:
 input:focus,select:focus,textarea:focus{border-color:#5E5EFF;}
 select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23555' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
 select option{background:#12121C;}
-label{font-size:11px;color:#555;display:block;margin-bottom:5px;letter-spacing:.08em;text-transform:uppercase;}
+label{font-size:11px;color:#555;display:block;margin-bottom:3px;letter-spacing:.08em;text-transform:uppercase;}
 /* modal */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(8px);z-index:100;display:flex;align-items:flex-end;padding:0;}
 .modal{background:#0E0E18;border:1px solid #2A2A3A;border-radius:24px 24px 0 0;padding:20px 20px calc(env(safe-area-inset-bottom,0px) + 20px);width:100%;max-height:92dvh;overflow-y:auto;animation:slideUp .28s cubic-bezier(.32,0,.17,1);}
 @keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
 .modal-handle{width:36px;height:4px;background:#2A2A3A;border-radius:2px;margin:0 auto 18px;}
 /* stat boxes */
-.stat-box{background:#0E0E18;border:1px solid #1A1A2A;border-radius:13px;padding:11px 12px;flex:1;min-width:0;}
+.stat-box{background:#0E0E18;border:1px solid #1A1A2A;border-radius:11px;padding:7px 4px;flex:1;min-width:0;max-width:20%;text-align:center;overflow:hidden;}
 /* banner */
 .banner{position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);left:50%;transform:translateX(-50%);z-index:200;background:#1A1A28;border:1px solid #3A3A5A;border-radius:12px;padding:11px 18px;font-size:13px;color:#E0E0EE;box-shadow:0 4px 24px rgba(0,0,0,.6);white-space:nowrap;animation:bd .3s ease;max-width:90vw;text-align:center;}
 .banner.err{border-color:rgba(255,107,107,.35);color:#FF9999;}
 @keyframes bd{from{opacity:0;transform:translateX(-50%) translateY(-8px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
 /* install banner */
 .install-bar{background:linear-gradient(135deg,rgba(94,94,255,.15),rgba(155,89,182,.15));border:1px solid rgba(94,94,255,.25);border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;}
-/* notif strip */
-.notif-strip{background:#0C0C16;border:1px solid #1A1A2A;border-radius:12px;padding:11px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;}
+/* notif toggle in header */
+.notif-toggle{display:flex;align-items:center;gap:6px;cursor:pointer;padding:4px 8px;border-radius:20px;background:#111120;border:1px solid #1C1C2C;}
+.toggle-track{width:34px;height:18px;border-radius:9px;transition:background .25s;position:relative;flex-shrink:0;}
+.toggle-thumb{position:absolute;top:2px;width:14px;height:14px;border-radius:7px;background:#fff;transition:left .25s;}
 /* fab */
 .fab{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 70px);right:20px;width:52px;height:52px;border-radius:26px;background:linear-gradient(135deg,#5E5EFF,#9B59B6);border:none;color:#fff;font-size:26px;cursor:pointer;box-shadow:0 4px 20px rgba(94,94,255,.4);display:flex;align-items:center;justify-content:center;z-index:20;transition:transform .15s;}
 .fab:active{transform:scale(.92);}
@@ -81,17 +83,14 @@ label{font-size:11px;color:#555;display:block;margin-bottom:5px;letter-spacing:.
       </div>
       <div id="header-right"></div>
     </div>
-    <!-- tabs -->
-    <div id="tabs-container" style="display:flex;gap:3px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none;-ms-overflow-style:none;"></div>
   </div>
 
   <div class="main-scroll" id="main-scroll">
     <div id="install-banner-container"></div>
-    <div id="notif-strip-container"></div>
-    <!-- stats -->
-    <div id="stats-row" style="display:flex;gap:7px;margin-bottom:12px;overflow-x:auto;padding-bottom:2px;"></div>
+    <!-- filter-stats -->
+    <div id="stats-row" style="display:flex;gap:4px;margin-bottom:10px;"></div>
     <!-- search -->
-    <div style="position:relative;margin-bottom:12px;">
+    <div style="position:relative;margin-bottom:8px;">
       <span style="position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#2E2E44;font-size:14px;pointer-events:none;">🔍</span>
       <input id="search-input" style="background:#0E0E18;border:1px solid #1A1A2A;border-radius:12px;color:#E0E0EE;padding:10px 14px 10px 38px;font-family:inherit;font-size:14px;width:100%;outline:none;" placeholder="제목, 장소, 카테고리 검색..."/>
     </div>
@@ -220,9 +219,13 @@ function isScheduled(id){ return scheduledTimers.some(s=>s.id===id); }
 async function handleRequestNotif(){
   if(!("Notification" in window)){showBanner("이 브라우저는 알림을 지원하지 않아요","err");return;}
   const p=await Notification.requestPermission();
-  if(p==="granted"){rescheduleAll();showBanner("알림이 허용되었어요! D-10에 자동으로 알립니다 🔔");renderNotifStrip();}
-  else if(p==="denied"){showBanner("알림이 차단되었어요. 브라우저 설정에서 변경해 주세요.","err");}
-  renderNotifStrip();
+  if(p==="granted"){rescheduleAll();showBanner("D-10 알림을 켰어요 🔔");renderNotifToggle();}
+  else if(p==="denied"){showBanner("알림이 차단됐어요. 브라우저 설정에서 변경해 주세요.","err");}
+  renderNotifToggle();
+}
+function disableNotif(){
+  // Can't programmatically revoke; guide user
+  showBanner("알림 끄기: 브라우저 설정 → 이 사이트 알림 차단","ok");
 }
 
 // ── render ─────────────────────────────────────────────────────────────────────
@@ -230,56 +233,55 @@ function render(){
   renderStats();
   renderTabs();
   renderList();
-  renderNotifStrip();
+  renderNotifToggle();
   renderInstallBanner();
 }
 
 function renderStats(){
   const counts=Object.fromEntries(STATUS_FLOW.map(s=>[s,tickets.filter(t=>t.status===s).length]));
-  const total=tickets.reduce((s,t)=>s+(t.adultCount||0)+(t.childCount||0),0);
   const row=document.getElementById("stats-row");
-  row.innerHTML=STATUS_FLOW.map(s=>`
-    <div class="stat-box" style="cursor:pointer;" onclick="setTab('${s}')">
-      <div style="font-size:9px;color:#444;margin-bottom:3px;letter-spacing:.06em;">${STATUS_META[s].label.toUpperCase()}</div>
-      <div style="font-size:19px;font-weight:700;font-family:'Space Mono',monospace;color:${STATUS_META[s].color};">${counts[s]}</div>
-    </div>
-  `).join("")+`
-    <div class="stat-box" style="flex:1.4;">
-      <div style="font-size:9px;color:#444;margin-bottom:3px;letter-spacing:.06em;">TOTAL</div>
-      <div style="font-size:19px;font-weight:700;font-family:'Space Mono',monospace;color:#E0E0EE;">${total}장</div>
-    </div>
-  `;
+  const allActive=activeTab==="all";
+  const allBox=`
+    <div class="stat-box" style="cursor:pointer;outline:${allActive?"1px solid #5E5EFF":"none"};" onclick="setTab('all')">
+      <div style="font-size:8px;color:${allActive?"#8888FF":"#3A3A5A"};margin-bottom:2px;letter-spacing:.03em;line-height:1.3;">전체</div>
+      <div style="font-size:17px;font-weight:700;font-family:'Space Mono',monospace;color:${allActive?"#E0E0EE":"#555"};">${tickets.length}</div>
+    </div>`;
+  row.innerHTML=allBox+STATUS_FLOW.map(s=>{
+    const active=activeTab===s;
+    return `
+    <div class="stat-box" style="cursor:pointer;outline:${active?"1px solid "+STATUS_META[s].color:"none"};" onclick="setTab('${s}')">
+      <div style="font-size:8px;color:${active?STATUS_META[s].color:"#3A3A5A"};margin-bottom:2px;letter-spacing:.03em;line-height:1.3;word-break:keep-all;word-wrap:break-word;">${STATUS_META[s].label}</div>
+      <div style="font-size:17px;font-weight:700;font-family:'Space Mono',monospace;color:${active?STATUS_META[s].color:"#555"};">${counts[s]}</div>
+    </div>`;
+  }).join("");
 }
 
 function renderTabs(){
-  const counts=Object.fromEntries(STATUS_FLOW.map(s=>[s,tickets.filter(t=>t.status===s).length]));
-  const c=document.getElementById("tabs-container");
-  const tabs=[["all",`전체 ${tickets.length}`],...STATUS_FLOW.map(s=>[s,`${STATUS_META[s].label} ${counts[s]}`])];
-  c.innerHTML=tabs.map(([v,l])=>`<button class="tab-btn ${activeTab===v?"active":""}" onclick="setTab('${v}')">${esc(l)}</button>`).join("");
+  // merged into renderStats
 }
 
 function renderNotifStrip(){
+  // now rendered in header via renderNotifToggle
+  renderNotifToggle();
+}
+function renderNotifToggle(){
   const perm="Notification" in window?Notification.permission:"unsupported";
-  const scheduled=scheduledTimers.length;
-  const statusText=perm==="granted"?`켜짐 · ${scheduled}개 예약됨`
-    :perm==="denied"?"차단됨 — 브라우저 설정에서 허용해 주세요"
-    :perm==="unsupported"?"이 브라우저는 알림을 지원하지 않아요"
-    :"허용하면 행사 D-10에 자동으로 알려드려요";
-  const btn=perm==="granted"
-    ?`<button onclick="testNotif()" style="background:none;border:1px solid #2A2A3A;color:#666;padding:5px 10px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:11px;">테스트</button>`
-    :perm!=="unsupported"
-    ?`<button onclick="handleRequestNotif()" style="background:linear-gradient(135deg,#5E5EFF,#9B59B6);border:none;color:#fff;padding:6px 14px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;">허용하기</button>`
-    :"";
-  document.getElementById("notif-strip-container").innerHTML=`
-    <div class="notif-strip">
-      <div style="display:flex;align-items:center;gap:8px;min-width:0;">
-        <span style="font-size:15px;flex-shrink:0;">🔔</span>
-        <div style="min-width:0;">
-          <div style="font-size:12px;font-weight:600;">D-10 푸시 알림</div>
-          <div style="font-size:10px;color:#444;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(statusText)}</div>
+  const on=perm==="granted";
+  const unsup=perm==="unsupported";
+  const trackColor=on?"#5E5EFF":unsup?"#222":"#2A2A3A";
+  const thumbLeft=on?"18px":"2px";
+  const label=on?`🔔 ON`:`🔔 OFF`;
+  const labelColor=on?"#8888FF":"#555";
+  const title=on?`D-10 알림 켜짐 (${scheduledTimers.length}개 예약)`:unsup?"알림 미지원":perm==="denied"?"알림 차단됨":"D-10 알림 끄짐";
+  document.getElementById("header-right").innerHTML=`
+    <div style="display:flex;align-items:center;gap:6px;">
+      <div title="${esc(title)}" onclick="${unsup?'':on?'disableNotif()':'handleRequestNotif()'}"
+        style="display:flex;align-items:center;gap:5px;cursor:${unsup?'default':'pointer'};padding:4px 8px;border-radius:20px;background:#0E0E18;border:1px solid #1C1C2C;">
+        <div class="toggle-track" style="background:${trackColor};">
+          <div class="toggle-thumb" style="left:${thumbLeft};"></div>
         </div>
+        <span style="font-size:11px;color:${labelColor};font-weight:500;">${label}</span>
       </div>
-      <div style="flex-shrink:0;">${btn}</div>
     </div>`;
 }
 
@@ -317,45 +319,45 @@ function renderList(){
   list.innerHTML=filtered.map(t=>{
     const d=dday(t);
     const sm=STATUS_META[t.status];
-    const qty=(t.adultCount||0)+(t.childCount||0);
+    const adultC=t.adultCount||0;
+    const childC=t.childCount||0;
+    const qty=adultC+childC;
     const idx=STATUS_FLOW.indexOf(t.status);
     const canAdv=idx>=0&&idx<STATUS_FLOW.length-1;
     const ongoingBadge=d.ongoing?`<span style="font-size:10px;background:rgba(168,230,207,.08);color:#A8E6CF;border:1px solid rgba(168,230,207,.2);padding:1px 7px;border-radius:20px;">진행중</span>`:"";
     const schedBadge=isScheduled(t.id)?`<span style="font-size:10px;color:#5E5EFF;opacity:.7;">🔔</span>`:"";
-    const qtyHtml=qty>0?`
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:${t.note?4:0}px;">
-        ${t.adultCount>0?`<span style="font-size:11px;color:#777;background:#111120;padding:2px 8px;border-radius:10px;">👨 성인 ${t.adultCount}장</span>`:""}
-        ${t.childCount>0?`<span style="font-size:11px;color:#777;background:#111120;padding:2px 8px;border-radius:10px;">🧒 아이 ${t.childCount}장</span>`:""}
-        <span style="font-size:11px;color:#555;">합계 ${qty}장</span>
-      </div>`:"";
+    const qtyInline=qty>0?(adultC>0&&childC>0?`성인${adultC}·아이${childC}`:adultC>0?`성인${adultC}장`:`아이${childC}장`):"";
     const noteHtml=t.note?`<div style="font-size:11px;color:#3A3A5A;font-style:italic;margin-top:2px;">📝 ${esc(t.note)}</div>`:"";
-    const nextBtnHtml=canAdv?`<button class="next-btn" onclick="advanceStatus(${t.id})">→ ${STATUS_META[STATUS_FLOW[idx+1]].label}</button>`:"";
+    const nextBtnHtml=canAdv?`<button class="icon-btn" title="${STATUS_META[STATUS_FLOW[idx+1]].label}으로 변경" onclick="advanceStatus(${t.id})" style="font-size:16px;">✅</button>`:"" ;
     return `
-      <div class="card" style="opacity:${t.status==="done"?.6:1};margin-bottom:9px;">
-        <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:${CAT_COLOR[t.category]||"#444"};border-radius:16px 0 0 16px;"></div>
-        <div style="display:flex;align-items:flex-start;gap:10px;">
-          <div style="flex:1;min-width:0;">
-            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:5px;">
-              <span style="font-size:14px;font-weight:600;">${esc(t.title)}</span>
-              <span class="badge" style="background:${sm.bg};color:${sm.color};border:1px solid ${sm.border};">${sm.label}</span>
-              ${ongoingBadge}${schedBadge}
-            </div>
-            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:${qty>0?5:0}px;">
-              <span style="font-size:11px;color:#4A4A6A;">📅 ${fmtDisplay(t)}</span>
-              ${t.venue?`<span style="font-size:11px;color:#4A4A6A;">📍 ${esc(t.venue)}</span>`:""}
-              <span style="font-size:10px;color:#555;background:#111120;padding:1px 7px;border-radius:10px;">${esc(t.category)}</span>
-            </div>
-            ${qtyHtml}${noteHtml}
+      <div class="card" style="opacity:${t.status==="done"?.55:1};margin-bottom:7px;">
+        <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:${CAT_COLOR[t.category]||"#444"};border-radius:14px 0 0 14px;"></div>
+        <!-- top row: title | badge qty -->
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:3px;">
+          <div style="display:flex;align-items:center;gap:5px;min-width:0;flex-wrap:wrap;flex:1;">
+            <span style="font-size:14px;font-weight:600;line-height:1.2;">${esc(t.title)}</span>
+            ${ongoingBadge}${schedBadge}
           </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:7px;flex-shrink:0;">
-            <div style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:${d.color};">${d.label}</div>
-            <div style="display:flex;gap:4px;align-items:center;">
-              ${nextBtnHtml}
-              <button class="icon-btn" onclick="openEdit(${t.id})">✏️</button>
-              <button class="icon-btn" onclick="removeTicket(${t.id})">🗑️</button>
-            </div>
+          <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
+            <span class="badge" style="background:${sm.bg};color:${sm.color};border:1px solid ${sm.border};width:72px;justify-content:center;font-size:11px;">${sm.label}</span>
+            <span style="font-size:11px;color:#666;white-space:nowrap;width:72px;text-align:right;">${qtyInline?`🎟 ${qtyInline}`:""}</span>
           </div>
         </div>
+        <!-- date + dday (full width) -->
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:1px;">
+          <span style="font-size:11px;color:#4A4A6A;white-space:nowrap;">📅 ${fmtDisplay(t)}</span>
+          <span style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:${d.color};">${d.label}</span>
+        </div>
+        <!-- venue + actions -->
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
+          <span style="font-size:11px;color:#4A4A6A;flex:1;min-width:0;">${t.venue?`📍 ${esc(t.venue)}`:""}</span>
+          <div style="display:flex;align-items:center;gap:1px;flex-shrink:0;">
+            ${nextBtnHtml}
+            <button class="icon-btn" onclick="openEdit(${t.id})">✏️</button>
+            <button class="icon-btn" onclick="removeTicket(${t.id})">🗑️</button>
+          </div>
+        </div>
+        ${noteHtml}
       </div>`;
   }).join("");
 }
